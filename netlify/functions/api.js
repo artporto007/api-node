@@ -1,10 +1,15 @@
-import express, { Router } from 'express';
+import express, { Router } from 'express'; 
 import serverless from 'serverless-http';
 
 const api = express();
 
 const router = Router();
-router.get('/hello', (req, res) => res.send('Hello World!'));
+router.get('/nome', (req, res) => {
+    res.json({
+        "nome" : "Seu_nome_completo"    // Substitua pelo seu nome
+    })
+    console.log('Rota /nome solicitada')  
+});
 
 api.use('/api/', router);
 
