@@ -1,11 +1,10 @@
-import dotenv from "dotenv";
-import express from "express";
-import { selectUsuarios } from "./bd.js";
+require("dotenv").config();
 
-dotenv.config();
+const express = require("express");
+const db = require("./bd");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 app.get("/", (req, res) => {
   res.json({
@@ -15,7 +14,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/usuarios", async (req, res) => {
-  const usuarios = await selectUsuarios();
+  const usuarios = await db.selectUsuarios();
 
   res.json(usuarios);
   console.log("Rota /usuarios solicitada");
