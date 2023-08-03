@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import express, { json } from "express";
-import { selectUsuarios, insertUsuario } from "./bd.js";
+import { selectUsuarios, insertUsuario, deleteUsuario } from "./bd.js";
 
 dotenv.config();
 
@@ -10,16 +10,20 @@ const port = 3000;
 app.use(express.json());
 
 app.get("/", (req, res) => {
+  console.log("Rota GET / solicitada");
   res.json({
     nome: "Seu_nome_completo",
   });
-  console.log("Rota GET / solicitada");
 });
 
 app.get("/usuarios", async (req, res) => {
-  const usuarios = await selectUsuarios();
-  res.json(usuarios);
-  console.log("Rota /usuarios solicitada");
+  console.log("Rota GET /usuarios solicitada");
+  try {
+    const usuarios = await selectUsuarios();
+    res.json(usuarios);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Erro!" });
+  }
 });
 
 app.post("/usuario", async (req, res) => {
@@ -28,31 +32,20 @@ app.post("/usuario", async (req, res) => {
     await insertUsuario(req.body);
     res.status(201).json({ message: "Usuário inserido com sucesso!" });
   } catch (error) {
-    console.log(error);
-    return res
-      .status(error.status || 500)
-      .json({ message: error.message || "Erro!" });
+    res.status(error.status || 500).json({ message: error.message || "Erro!" });
   }
 });
 
-// app.put("/usuario/:id", async (req, res) => {
-//   console.log("Rota PUT /usuario solicitada");
+app.delete("/usuario/:id", async (req, res) => {
+  console.log("Rota DELETE /usuario solicitada");
 
-//   const id = req.params.id;
-
-//   res.status(200).json({ id: id });
-
-//   // try {
-//   //   const [id] = req.params;
-//   //   await del(req.params);
-//   //   res.status(200).json({ message: "Usuário excluido com sucesso!" });
-//   // } catch (error) {
-//   //   console.log(error);
-//   //   return res
-//   //     .status(error.status || 500)
-//   //     .json({ message: error.message || "Erro!" });
-//   // }
-// });
+  try {
+    await deleteUsuario(req.params.id);
+    res.status(200).json({ message: "Usuário excluido com sucesso!" });
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Erro!" });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Serviço escutando na porta:  ${port}`);

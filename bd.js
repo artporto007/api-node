@@ -22,10 +22,10 @@ async function insertUsuario(data) {
   await client.query(query, usuario);
 }
 
-// async function deleteUsuario(id) {
-//   const client = await connect();
-//   const query = "DELETE FROM usuario WHERE id = $1";
-//   await client.query(query, id);
-// }
+async function deleteUsuario(id) {
+  const client = await connect();
+  const query = "DELETE FROM usuario WHERE id = $1";
+  await client.query(query, [id]);
+}
 
-export { selectUsuarios, insertUsuario };
+export { selectUsuarios, insertUsuario, deleteUsuario };
