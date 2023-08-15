@@ -15,10 +15,26 @@ async function selectUsuarios() {
   return res.rows;
 }
 
+async function selectUsuario(id) {
+  const client = await connect();
+  const query = "SELECT * FROM usuario WHERE id = $1";
+  const usuario = [id];
+  const res = await client.query(query, usuario);
+  return res.rows;
+}
+
 async function insertUsuario(data) {
   const client = await connect();
   const query = "INSERT INTO usuario (nome,senha,email) VALUES ($1,$2,$3) ";
   const usuario = [data.nome, data.senha, data.email];
+  await client.query(query, usuario);
+}
+
+async function updateUsuario(data) {
+  const client = await connect();
+  const query =
+    "UPDATE usuario SET nome = $1, email = $2, senha = $3 WHERE id = $4";
+  const usuario = [data.nome, data.email, data.senha, data.id];
   await client.query(query, usuario);
 }
 
@@ -28,4 +44,10 @@ async function deleteUsuario(id) {
   await client.query(query, [id]);
 }
 
-export { selectUsuarios, insertUsuario, deleteUsuario };
+export {
+  selectUsuario,
+  selectUsuarios,
+  insertUsuario,
+  deleteUsuario,
+  updateUsuario,
+};
