@@ -1,29 +1,18 @@
-import dotenv from "dotenv";
-import express, { json } from "express";
+import { Router } from "express";
+import { checkAuth } from "../middleware/auth.js";
+
 import {
   selectUsuario,
   selectUsuarios,
   insertUsuario,
   deleteUsuario,
   updateUsuario,
-} from "./src/bd.js";
+} from "../bd.js";
 
-dotenv.config();
+const router = Router();
 
-const app = express();
-const port = 3000;
-
-app.use(express.json());
-
-app.get("/", (req, res) => {
-  console.log("Rota GET / solicitada");
-  res.json({
-    nome: "Arthur Faria Porto",
-  });
-});
-
-app.get("/usuarios", async (req, res) => {
-  console.log("Rota GET /usuarios solicitada");
+router.get("/usuario", checkAuth, async (req, res) => {
+  console.log(`Rota GET /usuarios solicitada pelo usuario ${req.userId}`);
   try {
     const usuarios = await selectUsuarios();
     res.json(usuarios);
@@ -32,7 +21,7 @@ app.get("/usuarios", async (req, res) => {
   }
 });
 
-app.get("/usuario/:id", async (req, res) => {
+router.get("/usuario/:id", async (req, res) => {
   console.log("Rota GET /usuario solicitada");
   try {
     const usuario = await selectUsuario(req.params.id);
@@ -43,7 +32,7 @@ app.get("/usuario/:id", async (req, res) => {
   }
 });
 
-app.post("/usuario", async (req, res) => {
+router.post("/usuario", checkAuth, async (req, res) => {
   console.log("Rota POST /usuario solicitada");
   try {
     await insertUsuario(req.body);
@@ -53,8 +42,8 @@ app.post("/usuario", async (req, res) => {
   }
 });
 
-app.patch("/usuario", async (req, res) => {
-  console.log("Rota PATCH /usuario solicitada");
+router.put("/usuario", checkAuth, async (req, res) => {
+  console.log("Rota PUT /usuario solicitada");
   try {
     const usuario = await selectUsuario(req.body.id);
     if (usuario.length > 0) {
@@ -67,7 +56,7 @@ app.patch("/usuario", async (req, res) => {
   }
 });
 
-app.delete("/usuario/:id", async (req, res) => {
+router.delete("/usuario/:id", checkAuth, async (req, res) => {
   console.log("Rota DELETE /usuario solicitada");
 
   try {
@@ -78,18 +67,4 @@ app.delete("/usuario/:id", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Serviço escutando na porta:  ${port}`);
-});
-
-// Referências
-// https://www.youtube.com/watch?v=K_DyE6TdaSc  https://youtube.com/playlist?list=PL-cC6RUnFTfM220OhC7SB-agFC19s4BAP https://www.youtube.com/watch?v=r3Kld-3aVWo
-
-// Próximos passos
-// # Refatorar o código
-// ## Usar o router https://www.youtube.com/watch?v=9XtXkMkpQOM&list=PL_cUvD4qzbkwp6pxx27pqgohrsP8v1Wj2&index=6
-// ### Pra isso tirar a rota usuarios e ficar somente com usuario
-// #### Colocar um if dentro do get? pra verificar se tem o parametro
-// ## Colocar a pasta src
-// # Autorização https://www.youtube.com/watch?v=IVMccb2h9dw https://www.youtube.com/watch?v=Tw5LupcpKS4
-// # MVC? Como colocar o controller https://www.youtube.com/watch?v=zMt2gwkK3xs&list=PLHlHvK2lnJndvvycjBqQAbgEDqXxKLoqn&index=12
+export default router;
