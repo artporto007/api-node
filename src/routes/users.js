@@ -1,21 +1,32 @@
 import { Router } from "express";
-import { checkAuth } from "../middleware/auth.js";
-
+import { checkAuth } from "../middlewares/auth.js";
 import {
   selectUsuario,
   selectUsuarios,
+  selectUsuariosNome,
   insertUsuario,
   deleteUsuario,
   updateUsuario,
-} from "../bd.js";
+} from "../db/index.js";
 
 const router = Router();
 
-router.get("/usuario", checkAuth, async (req, res) => {
+router.get("/usuario", async (req, res) => {
   console.log(`Rota GET /usuarios solicitada pelo usuario ${req.userId}`);
   try {
     const usuarios = await selectUsuarios();
     res.json(usuarios);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Erro!" });
+  }
+});
+
+router.get("/usuario/nome/:nome", async (req, res) => {
+  console.log("Rota GET /usuario solicitada");
+  try {
+    const usuario = await selectUsuariosNome(req.params.nome);
+    if (usuario.length > 0) res.json(usuario);
+    else res.status(404).json({ message: "Usuário não encontrado!" });
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message || "Erro!" });
   }

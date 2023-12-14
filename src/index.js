@@ -38,3 +38,5 @@ app.listen(port, () => {
 
 // Criar um middleware para verificar se tem um token
 // Se tiver um token dá o next() se não manda fazer o login.
+
+// ! SESSÕES E COOKIES
