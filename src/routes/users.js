@@ -71,11 +71,34 @@ router.delete("/usuario/:id", checkAuth, async (req, res) => {
   console.log("Rota DELETE /usuario solicitada");
 
   try {
+    if (req.userId != req.params.id) {
+      console.log("Forbiden");
+      const error = new Error("Forbidden");
+      error.status = 401;
+      throw error;
+    }
     await deleteUsuario(req.params.id);
     res.status(200).json({ message: "Usuário excluido com sucesso!" });
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message || "Erro!" });
   }
+});
+
+router.get("/usuario/login/login", checkAuth, async (req, res) => {
+  console.log(req.userId);
+
+  res.status(222).json({ message: "o" });
+
+  // try {
+  //   const usuario = await selectUsuario(req.body.id);
+  //   if (usuario.length > 0) {
+  //     await updateUsuario(req.body);
+  //     res.status(200).json({ message: "Usuário atualizado com sucesso!" });
+  //   } else res.status(404).json({ message: "Usuário não encontrado!" });
+  // } catch (error) {
+  //   console.log(error);
+  //   res.status(error.status || 500).json({ message: error.message || "Erro!" });
+  // }
 });
 
 export default router;

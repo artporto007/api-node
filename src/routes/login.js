@@ -12,7 +12,7 @@ router.post("/login", async (req, res) => {
     console.log(usuario);
     if (Object.keys(usuario).length !== 0) {
       const token = jwt.sign({ user: usuario.id }, process.env.SECRET, {
-        expiresIn: 300,
+        expiresIn: 3000,
       });
       res.status(202).json({ token: token });
     } else res.status(404).json({ message: "Usuário/Senha incorreta!" });
